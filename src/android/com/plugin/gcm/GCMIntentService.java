@@ -97,11 +97,21 @@ public class GCMIntentService extends GCMBaseIntentService {
 				defaults = Integer.parseInt(extras.getString("defaults"));
 			} catch (NumberFormatException e) {}
 		}
-		
+
+		int icon;
+		try {
+			Class<?> drawableClass = Class.forName(context.getApplicationInfo().packageName + ".R$drawable");
+			Object drawableInstance = drawableClass.newInstance();
+			icon = drawableClass.getField(extras.getString("icon")).getInt(drawableInstance);
+		}
+		catch (Exception e) {
+			icon = context.getApplicationInfo().icon;
+		}
+
 		NotificationCompat.Builder mBuilder =
 			new NotificationCompat.Builder(context)
 				.setDefaults(defaults)
-				.setSmallIcon(context.getApplicationInfo().icon)
+				.setSmallIcon(icon)
 				.setWhen(System.currentTimeMillis())
 				.setContentTitle(extras.getString("title"))
 				.setTicker(extras.getString("title"))
